@@ -1,0 +1,60 @@
+#!/bin/bash
+echo "个性化文件搜索工具:"
+echo "1:grep搜索工具"
+echo "2:find搜索工具"
+echo "选择想要使用的工具[1|2]:"
+read choice1
+if [ "$choice1" == "1" ] #选择grep
+
+
+then
+	ls /dev > devf
+	echo "1:查找以匹配模式开头的文件"
+	echo "2:查找不包含匹配模式的文件"
+read CHOICE1
+case $CHOICE1 in
+	1)echo "请输入匹配模式"
+	  read moshi
+		grep -E ^$moshi devf
+;;
+	2)echo "请输入匹配模式"
+	  read moshi
+		grep -Ev $moshi devf
+;;
+esac
+
+
+else #选择find
+echo "1: 按文件名查找文件并显示其路径"
+echo "2: 按文件内容查找文件并显示其路径"
+echo "3: 按时间查找文件"
+echo "4: 按文件大小下限值查找文件"
+
+echo -n "请选择使用的搜索工具:[1,2,3,4,] >"
+read CHOICE
+case ${CHOICE} in
+	1) echo "请输入文件名..."
+	   read NAME
+	   find . -iname "${NAME}"    #查找文件不区分大小写
+	;;
+	2) echo "请输入字符串..."
+	   read VAL
+	   find . | xargs grep -ri "$VAL"    #以递归方式查询目录下的所有子目录中的
+                                              文件并且不区分大小写
+	;;
+        3)echo "请输入时间..." 
+          read time
+          find  -mtime +$time    #查找某个时间之前的所有文件
+        ;;
+        4)echo "请输入文件大小..."
+          read size
+          find /dev -size +$size    #查找大小为某个数值的文件
+        ;;
+        
+	*) echo "您的输入不符合条件！"
+	esac
+	echo "按回车结束..."
+	read DUMMY
+	exit 0
+
+fi

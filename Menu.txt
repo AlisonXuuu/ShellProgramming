@@ -1,0 +1,88 @@
+#! /bin/bash
+MYDATE="`date +%d/%m/%y`"
+THIS_HOST="`hostname -s`"
+USER="`whoami`"
+while :
+do
+clear
+cat << MAYDAY
+---------------------------------------------------------------
+User:$USER    HOST:$THIS_HOST    DATE:$MYDATE
+              A:创建子目录并复制文件
+              B:文件权限测试
+              C:文件字符转换
+              D:文件总数及文本行数统计
+              E:文件查找
+              Q:退出系统
+---------------------------------------------------------------
+MAYDAY
+echo -n "选择要执行的操作:[A,B,C,D,E,Q]>"
+read CHOICE_1
+case $CHOICE_1 in
+	A) mkdir ~/227    #创建目标
+	   chmod 755 ~/227    #设置权限
+	   test -d ~/227    #文件存在并且是目录
+	   if [ $? -eq 0 ]    #判断是否等于0，$?表示最后一次执行命令的退出状态，
+                               0为成功，非0为失败，$表示变量替换
+	   then
+	   cp  ~/test/file1 ~/227
+	   cp  ~/test/file2 ~/227 
+	   echo "文件file1的内容为"    #显示文字
+	   cat ~/227/file1
+	   echo "文件file2的内容为"
+	   cat ~/227/file2
+	   echo "截断后的file1内容为"
+	   cat /dev/null > ~/227/file1
+	   echo "截断后的file2内容为"
+	   cat /dev/null > ~/227/file2
+	   fi
+	;;
+	B) rm -fr *.*~    #强制删除文件和目录 -f:强制删除文件或目录 -r:将指定目录下
+                           所有文件与子目录一并处理
+	   ls -l > power.txt    #命令列出指定目录的内容 -l:以长格式显示文件的详细
+                                 信息，输出分成多列，文件类型与权限、链接数、文件主
+                                 文件组、文件大小、建立或最近修改的时间
+	   echo -n "请输入要测试权限的文件名："    #不换行输出
+	   read FILENAME
+	   echo "文件 $FILENAME 的权限为 `egrep $FILENAME ~/操作系统实验3/power.txt|awk '{print $1}'`"
+	;;
+	C) cp  ~/test/file1 ~/227
+	   cp  ~/test/file2 ~/227
+	   cat ~/227/file1|tr "[a-z]" "[A-Z]" > new1.txt    #将文件中a-z使用A-Z替换
+	   cat ~/227/file2|tr "[a-z]" "[A-Z]" > new2.txt
+	   echo "转换后的文件内容为:`cat new1.txt`"
+	   echo "转换后的文件内容为:`cat new2.txt`"
+	;;
+	D) echo "1) 统计/dev目录下目录文件和符号链接文件的数目"
+	   echo "2) 统计系统中某文件中空行的行数"
+	   echo "3) 显示当前系统中所有环境变量"
+	   echo -n "选择要执行的操作:[1,2,3]>"
+	   read CHOICE_2
+	   case $CHOICE_2 in
+		1) ls -F /dev > devFile.txt   #对输出文件不排序
+		   grep '/' devFile.txt > dictionary.txt
+		   grep '@' devFile.txt > link.txt
+		   echo -n "目录文件数为"
+		   cat dictionary.txt | wc -l 
+		   echo -n "链接文件数为"
+		   cat link.txt | wc -l 
+		;;
+		2) echo -n "请输入文件名:"
+		   read FileName
+		   grep -E '^$' -x $FileName > null.txt    #^$表示空行 -x匹配整行
+		   echo "$FileName 的空行数为 `cat null.txt|wc -l`"
+		;;
+		3) env    #显示系统中已存在的环境变量
+		;;
+		esac
+	;;
+	E) echo "文件查找"
+	   find /dev -name 's????' | xargs file    #xargs不会出现溢出错误
+	;;
+	Q) exit 0
+	;;
+	*) echo "您的输入不符合条件！";;
+	esac
+	echo "按回车继续..."
+	read DUMMY
+	done

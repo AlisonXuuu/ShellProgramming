@@ -1,0 +1,16 @@
+#! /bin/bash
+total1="`grep -F 1301 pc.txt | wc -l`"    #grep -F 将查找模式解释成单纯的字符串
+nice1="`grep -F 1301 pc.txt | awk -F: '$3 > 90' | wc -l`"    #awk -F 指定分隔符
+rate1=$(($nice1*100/$total1))
+
+total2="`grep -F 1302 pc.txt | wc -l`"
+nice2="`grep -F 1302 pc.txt | awk -F: '$3 > 90' | wc -l`"
+rate2=$(($nice2*100/$total2))
+
+total3="`grep -F 1303 pc.txt | wc -l`"
+nice3="`grep -F 1303 pc.txt | awk -F: '$3 > 90' | wc -l`"
+rate3=$(($nice3*100/$total3))
+
+echo "1301班选课人数为${total1},优秀率为${rate1}%"
+echo "1301班选课人数为${total2},优秀率为${rate2}%"
+echo "1301班选课人数为${total3},优秀率为${rate3}%"
